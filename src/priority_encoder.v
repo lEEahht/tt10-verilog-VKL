@@ -15,10 +15,23 @@ module tt_um_VKL (
     input  wire       clk,      // clock
     input  wire       rst_n     // reset_n - low to reset
 );
+    wire [7:0] priority_out;
+    tt_um_priority_encoder encoder (
+        .input_signal({ui_in, uio_in}), // Combining 8-bit ui_in and 8-bit uio_in to form 16-bit input
+        .encoded_output(priority_out)
+    );
 
-    module tt_um_priority_encoder (
-    input [15:0] input
-    wire [7:0] output C
+    assign uo_out = priority_out; // Drive output with encoder output
+    assign uio_out = 0;
+    assign uio_oe  = 0;
+
+    wire _unused = &{ena, clk, rst_n, 1'b0}; // Avoid unused signal warnings
+
+endmodule
+
+module tt_um_priority_encoder (
+    input  wire [15:0] input_signal,
+    output reg  [7:0] encoded_output
 );
 
     always @(*) begin
@@ -42,14 +55,5 @@ module tt_um_VKL (
         else                   C = 8'b1111_0000; // Special case: All zeros
     end
 
-
-    
-        
-  // All output pins must be assigned. If not used, assign to 0.
-  assign uio_out = 0;
-  assign uio_oe  = 0;
-
-  // List all unused inputs to prevent warnings
-  wire _unused = &{ena, clk, rst_n, 1'b0};
 
 endmodule

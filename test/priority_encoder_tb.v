@@ -31,8 +31,8 @@ module tb_tt_um_VKL;
 
     // Instantiate the Priority Encoder
     tt_um_priority_encoder encoder_inst (
-        .input(In),
-        .output(C)
+        .In(In),
+        .C(C)
     );
     
     // Clock Generation

@@ -18,28 +18,28 @@ module tt_um_VKL (
 
 module tt_um_priority_encoder {
     input [15:0] input
-    wire [7:0] output
+    wire [7:0] output C
 };
 
     always @(*) begin
     // Priority Checking from In[15] to In[0]
-    if (In[15] == 1)       C = 8'b0000_1111; // 15 in binary
-    else if (In[14] == 1)  C = 8'b0000_1110; // 14 in binary
-    else if (In[13] == 1)  C = 8'b0000_1101; // 13 in binary
-    else if (In[12] == 1)  C = 8'b0000_1100; // 12 in binary
-    else if (In[11] == 1)  C = 8'b0000_1011; // 11 in binary
-    else if (In[10] == 1)  C = 8'b0000_1010; // 10 in binary
-    else if (In[9] == 1)   C = 8'b0000_1001; // 9 in binary
-    else if (In[8] == 1)   C = 8'b0000_1000; // 8 in binary
-    else if (In[7] == 1)   C = 8'b0000_0111; // 7 in binary
-    else if (In[6] == 1)   C = 8'b0000_0110; // 6 in binary
-    else if (In[5] == 1)   C = 8'b0000_0101; // 5 in binary
-    else if (In[4] == 1)   C = 8'b0000_0100; // 4 in binary
-    else if (In[3] == 1)   C = 8'b0000_0011; // 3 in binary
-    else if (In[2] == 1)   C = 8'b0000_0010; // 2 in binary
-    else if (In[1] == 1)   C = 8'b0000_0001; // 1 in binary
-    else if (In[0] == 1)   C = 8'b0000_0000; // 0 in binary
-    else                   C = 8'b1111_0000; // Special case: All zeros
+        if (In[15] == 1)       C = 8'b0000_1111; // 15 in binary
+        else if (In[14] == 1)  C = 8'b0000_1110; // 14 in binary
+        else if (In[13] == 1)  C = 8'b0000_1101; // 13 in binary
+        else if (In[12] == 1)  C = 8'b0000_1100; // 12 in binary
+        else if (In[11] == 1)  C = 8'b0000_1011; // 11 in binary
+        else if (In[10] == 1)  C = 8'b0000_1010; // 10 in binary
+        else if (In[9] == 1)   C = 8'b0000_1001; // 9 in binary
+        else if (In[8] == 1)   C = 8'b0000_1000; // 8 in binary
+        else if (In[7] == 1)   C = 8'b0000_0111; // 7 in binary
+        else if (In[6] == 1)   C = 8'b0000_0110; // 6 in binary
+        else if (In[5] == 1)   C = 8'b0000_0101; // 5 in binary
+        else if (In[4] == 1)   C = 8'b0000_0100; // 4 in binary
+        else if (In[3] == 1)   C = 8'b0000_0011; // 3 in binary
+        else if (In[2] == 1)   C = 8'b0000_0010; // 2 in binary
+        else if (In[1] == 1)   C = 8'b0000_0001; // 1 in binary
+        else if (In[0] == 1)   C = 8'b0000_0000; // 0 in binary
+        else                   C = 8'b1111_0000; // Special case: All zeros
 end
 
 endmodule

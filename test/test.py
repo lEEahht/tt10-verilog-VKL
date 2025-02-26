@@ -7,15 +7,15 @@ from cocotb.triggers import ClockCycles
 
 
 @cocotb.test()
-async def test_project(dut):
-    dut._log.info("Start")
+async def test_priority_encoder(dut):
+    dut._log.info("Start Priority Encoder Test")
 
-    # Set the clock period to 10 us (100 KHz)
+    # Set up the clock (10 us period -> 100 KHz frequency)
     clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())
 
-    # Reset
-    dut._log.info("Reset")
+    # Reset DUT
+    dut._log.info("Reset DUT")
     dut.ena.value = 1
     dut.ui_in.value = 0
     dut.uio_in.value = 0
@@ -23,46 +23,39 @@ async def test_project(dut):
     await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
 
-    dut._log.info("Test project behavior")
+    dut._log.info("Begin Testing Priority Encoder")
 
-    # Set the input values you want to test
-    dut.ui_in.value = 20
-    dut.uio_in.value = 30
+    # Test all 16-bit single-bit priority inputs
+    for i in range(16):
+        input_value = 1 << i  # Shift 1 to the correct position to simulate priority encoding
 
-    # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 1)
+        # Split into ui_in (upper 8 bits) and uio_in (lower 8 bits)
+        ui_in_val = (input_value >> 8) & 0xFF  # Upper 8 bits
+        uio_in_val = input_value & 0xFF  # Lower 8 bits
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    assert dut.uo_out.value == 50
+        # Assign input values
+        dut.ui_in.value = ui_in_val
+        dut.uio_in.value = uio_in_val
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
-    
-    # Test all combinations of ui_in and uio_in across 256 possible values
-    max_val = 255  # Maximum sum value allowed
-    a_vals = [i for i in range(max_val)]  # ui_in can range from 0 to 255
-    b_vals = [j for j in range(max_val)]  # uio_in can also range from 0 to 255
+        # Wait for one clock cycle
+        await ClockCycles(dut.clk, 1)
 
-    for i in range(len(a_vals)):
-        for j in range(len(b_vals)):
-            # Set the input values
-            dut.ui_in.value = a_vals[i]
-            dut.uio_in.value = b_vals[j]
+        # Read the output
+        output_val = int(dut.uo_out.value)
 
-            # Wait for one or more clock cycles to see the output values
-            await ClockCycles(dut.clk, 20)  # Allow enough time for the DUT to process
+        # Expected priority encoder output
+        expected_output = i if i < 16 else 255  # If no priority bit is set, return 255
 
-            # Log the output and check the assertion
-            dut._log.info(f"Test case ui_in={a_vals[i]}, uio_in={b_vals[j]} -> uo_out={dut.uo_out.value}")
+        # Log result
+        dut._log.info(f"Test case ui_in={ui_in_val:08b}, uio_in={uio_in_val:08b} -> uo_out={output_val:08b}")
 
-            # Expected output logic (assuming sum modulo 256, replace as per DUT logic)
-            expected_uo_out = (a_vals[i] + b_vals[j]) % 256
+        # Assert correctness
+        assert output_val == expected_output, (
+            f"Test failed for ui_in={ui_in_val:08b}, uio_in={uio_in_val:08b}. Expected {expected_output}, "
+            f"but got {output_val:08b}"
+        )
 
-            # Assert the output matches the expected value
-            assert int(dut.uo_out.value) == expected_uo_out, (
-                f"Test failed for ui_in={a_vals[i]}, uio_in={b_vals[j]}. Expected {expected_uo_out}, "
-                f"but got {dut.uo_out.value}")
-            
-            # Optionally log the test case result if the assertion passed
-            dut._log.info(f"Test passed for ui_in={a_vals[i]}, uio_in={b_vals[j]} with uo_out={dut.uo_out.value}")
+        # Log success
+        dut._log.info(f"Test passed for priority bit at position {i}")
+
+    dut._log.info("Priority Encoder Test Completed Successfully")

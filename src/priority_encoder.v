@@ -42,7 +42,7 @@ module tt_um_VKL (
         else                   C = 8'b1111_0000; // Special case: All zeros
     end
 
-endmodule
+
     
         
   // All output pins must be assigned. If not used, assign to 0.

@@ -30,12 +30,13 @@ module tt_um_VKL (
 endmodule
 
 module tt_um_priority_encoder (
-    input  wire [15:0] input_signal,
-    output reg  [7:0] encoded_output
+    input  wire [15:0] In,
+    output reg  [7:0] C
 );
 
-    always @(*) begin
-    // Priority Checking from In[15] to In[0]
+    always @(*) 
+    begin
+        // Priority Checking from In[15] to In[0]
         if (In[15] == 1)       C = 8'b0000_1111; // 15 in binary
         else if (In[14] == 1)  C = 8'b0000_1110; // 14 in binary
         else if (In[13] == 1)  C = 8'b0000_1101; // 13 in binary
@@ -54,6 +55,5 @@ module tt_um_priority_encoder (
         else if (In[0] == 1)   C = 8'b0000_0000; // 0 in binary
         else                   C = 8'b1111_0000; // Special case: All zeros
     end
-
 
 endmodule
